@@ -14,6 +14,7 @@ if len(sys.argv) > 1:
             line += 1
     except Exception as e:
         print("Exception occurred: ", str(e))
+        exit(1)
 else:
     while True:
         try:
