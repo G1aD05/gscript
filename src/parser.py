@@ -1,3 +1,4 @@
+import random
 from tokenTypes import Tokens
 from common import *
 import urllib.request
@@ -18,7 +19,7 @@ class Parse:
             exit(0)
 
         elif self.tokens["KEYWORD"] == Tokens.PRINT:
-            print(self.parse_variable(self.tokens["TOKENS"][self.index]))
+            print(str(self.parse_variable(self.tokens["TOKENS"][self.index])))
 
         elif self.tokens["KEYWORD"] == Tokens.ADD:
             sum = int(self.parse_variable(self.tokens["TOKENS"][self.index])) + int(self.parse_variable(self.tokens["TOKENS"][self.index + 1]))
@@ -65,7 +66,10 @@ class Parse:
             urllib.request.urlretrieve(self.parse_variable(self.tokens["TOKENS"][self.index]), self.parse_variable(self.tokens["TOKENS"][self.index + 1]))
 
         elif self.tokens["KEYWORD"] == Tokens.JOIN:
-            pass
+            self.variables[self.tokens["TOKENS"][self.index]] = self.parse_variable(self.tokens["TOKENS"][self.index + 1]) + (self.parse_variable(self.tokens["TOKENS"][self.index + 2]))
+
+        elif self.tokens["KEYWORD"] == Tokens.RANDOM:
+            self.variables[self.tokens["TOKENS"][self.index]] = random.randint(int(self.parse_variable(self.tokens["TOKENS"][self.index + 1])), int(self.parse_variable(self.tokens["TOKENS"][self.index + 2])))
 
         elif self.tokens["KEYWORD"] == Tokens.EXIT:
             exit(0)
@@ -83,7 +87,7 @@ class Parse:
             # Function to replace based on dictionary
             def replace_match(match):
                 key = match.group(0)
-                return self.variables.get(key[1:], key[1:])
+                return str(self.variables.get(key[1:], key[1:]))
 
             # Replace matching words based on dictionary
             result = re.sub(pattern, replace_match, variable)
