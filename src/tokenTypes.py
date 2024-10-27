@@ -8,9 +8,14 @@ class Tokens:
     DIV = "DIV"
     ASSIGN = "ASSIGN"
     REPLACE = "REPLACE"
-    USE = "USE"
     TOSTRING = "TOSTRING"
     TONUMBER = "TONUMBER"
+    READ = "READ"
+    WRITE = "WRITE"
+    INPUT = "INPUT"
+    DOWNLOAD = "DOWNLOAD"
+    JOIN = "JOIN"
+    RANDOM = "RANDOM"
 
     # Others
 
