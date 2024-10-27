@@ -1,5 +1,7 @@
 from tokenTypes import Tokens
-from common import line, variables
+from common import *
+import urllib.request
+import re
 
 
 class Parse:
@@ -11,16 +13,12 @@ class Parse:
         self.parse()
 
     def parse(self):
-        join = ""
         if self.tokens["KEYWORD"] == Tokens.ILLEGAL:
             print(f"Invalid keyword found at line {self.line + 1}")
             exit(0)
 
         elif self.tokens["KEYWORD"] == Tokens.PRINT:
-            self.index += 1
-            for token in range(len(self.tokens["TOKENS"])):
-                join += str(self.parse_variable(self.tokens["TOKENS"][token])) + " "
-            print(join)
+            print(self.parse_variable(self.tokens["TOKENS"][self.index]))
 
         elif self.tokens["KEYWORD"] == Tokens.ADD:
             sum = int(self.parse_variable(self.tokens["TOKENS"][self.index])) + int(self.parse_variable(self.tokens["TOKENS"][self.index + 1]))
@@ -43,23 +41,31 @@ class Parse:
             self.variables[self.tokens["TOKENS"][self.index]] = quotient
 
         elif self.tokens["KEYWORD"] == Tokens.ASSIGN:
-            for token in range(1, len(self.tokens["TOKENS"])):
-                join += str(self.parse_variable(self.tokens["TOKENS"][token])) + " "
-            self.variables[self.tokens["TOKENS"][self.index]] = join
+            self.variables[self.tokens["TOKENS"][self.index]] = self.tokens["TOKENS"][self.index + 1]
 
         elif self.tokens["KEYWORD"] == Tokens.REPLACE:
-            for token in range(3, len(self.tokens["TOKENS"])):
-                join += str(self.parse_variable(self.tokens["TOKENS"][token])) + " "
-            self.variables[self.tokens["TOKENS"][self.index]] = join.replace(self.parse_variable(str(self.tokens["TOKENS"][self.index + 1])), self.parse_variable(str(self.tokens["TOKENS"][self.index + 2])))
-
-        elif self.tokens["KEYWORD"] == Tokens.USE:
-            pass
+            self.variables[self.tokens["TOKENS"][self.index]] = self.parse_variable(self.tokens["TOKENS"][self.index + 3]).replace(self.parse_variable(str(self.tokens["TOKENS"][self.index + 1])), self.parse_variable(str(self.tokens["TOKENS"][self.index + 2])))
 
         elif self.tokens["KEYWORD"] == Tokens.TOSTRING:
             self.variables[self.tokens["TOKENS"][self.index]] = str(self.parse_variable(self.tokens["TOKENS"][self.index + 1]))
 
         elif self.tokens["KEYWORD"] == Tokens.TONUMBER:
             self.variables[self.tokens["TOKENS"][self.index]] = float(self.parse_variable(self.tokens["TOKENS"][self.index + 1]))
+
+        elif self.tokens["KEYWORD"] == Tokens.READ:
+            self.variables[self.tokens["TOKENS"][self.index]] = open(self.parse_variable(self.tokens["TOKENS"][self.index + 1]), "r").read()
+
+        elif self.tokens["KEYWORD"] == Tokens.WRITE:
+            open(self.tokens["TOKENS"][self.index], 'w').write(self.parse_variable(self.tokens["TOKENS"][self.index + 1]))
+
+        elif self.tokens["KEYWORD"] == Tokens.INPUT:
+            self.variables[self.tokens["TOKENS"][self.index]] = input(self.parse_variable(self.tokens["TOKENS"][self.index + 1]))
+
+        elif self.tokens["KEYWORD"] == Tokens.DOWNLOAD:
+            urllib.request.urlretrieve(self.parse_variable(self.tokens["TOKENS"][self.index]), self.parse_variable(self.tokens["TOKENS"][self.index + 1]))
+
+        elif self.tokens["KEYWORD"] == Tokens.JOIN:
+            pass
 
         elif self.tokens["KEYWORD"] == Tokens.EXIT:
             exit(0)
@@ -71,7 +77,16 @@ class Parse:
         return self.variables
 
     def parse_variable(self, variable):
-        if variable.startswith("%"):
-            return self.variables[variable[1:]]
+        if "%" in variable:
+            pattern = r'(%\w+)'
+
+            # Function to replace based on dictionary
+            def replace_match(match):
+                key = match.group(0)
+                return self.variables.get(key[1:], key[1:])
+
+            # Replace matching words based on dictionary
+            result = re.sub(pattern, replace_match, variable)
+            return result
         else:
             return variable
