@@ -3,6 +3,8 @@ from tokenTypes import Tokens
 from common import *
 import urllib.request
 import re
+import time
+from tokenizer import Tokenize
 
 
 class Parse:
@@ -11,6 +13,7 @@ class Parse:
         self.tokens = tokens
         self.index = 0
         self.variables = variables
+        self.runtime_vars = {}
         self.parse()
 
     def parse(self):
@@ -70,6 +73,18 @@ class Parse:
 
         elif self.tokens["KEYWORD"] == Tokens.RANDOM:
             self.variables[self.tokens["TOKENS"][self.index]] = random.randint(int(self.parse_variable(self.tokens["TOKENS"][self.index + 1])), int(self.parse_variable(self.tokens["TOKENS"][self.index + 2])))
+
+        elif self.tokens["KEYWORD"] == Tokens.WAIT:
+            time.sleep(int(self.parse_variable(self.tokens["TOKENS"][self.index])))
+
+        elif self.tokens["KEYWORD"] == Tokens.RUN:
+            code = open(self.tokens["TOKENS"][self.index], "r").read()
+            self.runtime_vars = self.variables.copy()
+            for lines in code.split("\n"):
+                self.variables.update(Parse(Tokenize(lines.strip()).tokens).return_vars())
+
+            self.variables.clear()
+            self.variables = self.runtime_vars
 
         elif self.tokens["KEYWORD"] == Tokens.EXIT:
             exit(0)
