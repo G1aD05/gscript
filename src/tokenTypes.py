@@ -16,6 +16,8 @@ class Tokens:
     DOWNLOAD = "DOWNLOAD"
     JOIN = "JOIN"
     RANDOM = "RANDOM"
+    WAIT = "WAIT"
+    RUN = "RUN"
 
     # Others
 
