@@ -1,9 +1,11 @@
 from tokenTypes import Tokens
+import re
 
 
 class Tokenize:
     def __init__(self, code):
-        self.code = code.split(" ")
+        self.code = re.findall(r'("[^"]*"|\S+)', code)
+        self.code = [match.strip('"') for match in self.code]
         self.keyword = None
         self.tokens = self.tokenize()
 
@@ -24,8 +26,6 @@ class Tokenize:
                 self.keyword = Tokens.ASSIGN
             case "REPLACE":
                 self.keyword = Tokens.REPLACE
-            case "USE":
-                self.keyword = Tokens.USE
             case "TOSTRING":
                 self.keyword = Tokens.TOSTRING
             case "TONUMBER":
@@ -34,6 +34,18 @@ class Tokenize:
                 self.keyword = Tokens.EXIT
             case "//":
                 self.keyword = Tokens.NOTE
+            case "OPEN":
+                self.keyword = Tokens.READ
+            case "WRITE":
+                self.keyword = Tokens.WRITE
+            case "INPUT":
+                self.keyword = Tokens.INPUT
+            case "DOWNLOAD":
+                self.keyword = Tokens.DOWNLOAD
+            case "JOIN":
+                self.keyword = Tokens.JOIN
+            case "RANDOM":
+                self.keyword = Tokens.RANDOM
             case _:
                 if self.code[0] == "":
                     pass
