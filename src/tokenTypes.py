@@ -18,6 +18,7 @@ class Tokens:
     RANDOM = "RANDOM"
     WAIT = "WAIT"
     RUN = "RUN"
+    EXECUTE = "EXECUTE"
 
     # Others
 
