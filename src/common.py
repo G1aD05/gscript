@@ -1,2 +1,6 @@
-variables = {}
-line = 0
+class Public:
+    variables = {}
+    line = 0
+
+
+public = Public()
