@@ -16,6 +16,7 @@ class Parse:
         self.index = 0
         self.variables = public.variables
         self.runtime_vars = {}
+        self.recursion_limit = public.recursion_limit
         self.parse()
 
     def parse(self):
@@ -109,6 +110,26 @@ class Parse:
         elif self.tokens["KEYWORD"] == Tokens.EXECUTE:
             code = self.parse_variable(self.tokens["TOKENS"][self.index])
             Parse(Tokenize(code).tokens)
+
+        elif self.tokens["KEYWORD"] == Tokens.LOOP:
+            run_count = 0
+            if self.parse_variable(self.tokens["TOKENS"][self.index]) == "inf":
+                while True:
+                    run_count += 1
+                    if run_count > self.recursion_limit:
+                        raise RecursionError("Automatic recursion error did not raise")
+                    else:
+                        self.variables.update(Parse(Tokenize(re.sub(r'[{}]', '', self.tokens["TOKENS"][self.index + 1])).tokens).return_vars())
+            else:
+                for _ in range(int(self.parse_variable(self.tokens["TOKENS"][self.index]))):
+                    run_count += 1
+                    if run_count > self.recursion_limit:
+                        raise RecursionError("Automatic recursion error did not raise")
+                    else:
+                        self.variables.update(Parse(Tokenize(re.sub(r'[{}]', '', self.tokens["TOKENS"][self.index + 1])).tokens).return_vars())
+
+        elif self.tokens["KEYWORD"] == Tokens.SETRECURSION:
+            public.recursion_limit = int(self.parse_variable(self.tokens["TOKENS"][self.index]))
 
         elif self.tokens["KEYWORD"] == Tokens.EXIT:
             exit(0)
