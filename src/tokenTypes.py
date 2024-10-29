@@ -19,6 +19,8 @@ class Tokens:
     WAIT = "WAIT"
     RUN = "RUN"
     EXECUTE = "EXECUTE"
+    LOOP = "LOOP"
+    SETRECURSION = "SETRECURSION"
 
     # Others
 
