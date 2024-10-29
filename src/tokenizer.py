@@ -4,7 +4,7 @@ import re
 
 class Tokenize:
     def __init__(self, code):
-        self.code = re.findall(r'("[^"]*"|\S+)', code)
+        self.code = re.findall(r'("[^"]*"|\{[^}]*}|\S+)', code)
         self.code = [match.strip('"') for match in self.code]
         self.keyword = None
         self.tokens = self.tokenize()
@@ -53,6 +53,10 @@ class Tokenize:
                     self.keyword = Tokens.RUN
                 case "EXECUTE":
                     self.keyword = Tokens.EXECUTE
+                case "LOOP":
+                    self.keyword = Tokens.LOOP
+                case "SETRECURSION":
+                    self.keyword = Tokens.SETRECURSION
                 case _:
                     self.keyword = Tokens.ILLEGAL
         else:
