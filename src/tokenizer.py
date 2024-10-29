@@ -51,6 +51,8 @@ class Tokenize:
                     self.keyword = Tokens.WAIT
                 case "RUN":
                     self.keyword = Tokens.RUN
+                case "EXECUTE":
+                    self.keyword = Tokens.EXECUTE
                 case _:
                     self.keyword = Tokens.ILLEGAL
         else:
